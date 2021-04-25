@@ -32,12 +32,21 @@
     Edit
     <code>components/HelloWorld.vue</code> to test hot module replacement.
   </p>
+  <div>
+    {{ state.name }} {{ state.age}}
+  </div>
+  <div>
+    <refCom />
+  </div>
 </template>
 
 <script lang="ts">
-import { ref, defineComponent } from 'vue'
+import { ref, defineComponent, reactive, isProxy, readonly } from 'vue'
+import refCom from './ref.vue'
+
 export default defineComponent({
   name: 'HelloWorld',
+  components: { refCom },
   props: {
     msg: {
       type: String,
@@ -45,8 +54,23 @@ export default defineComponent({
     }
   },
   setup: () => {
+    const obj = ref({ name: 'kirito' })
     const count = ref(0)
-    return { count }
+    const state = reactive({
+      name: 'kirito',
+      age: 16
+    })
+    const read = readonly(state);
+    const readbyObj = readonly({ name: 1 })
+    console.log(obj)
+    console.log(count)
+    console.log(state)
+    console.log(isProxy(count), isProxy(state), isProxy(read), isProxy(readbyObj))
+
+    return { 
+      count,
+      state
+    }
   }
 })
 </script>
