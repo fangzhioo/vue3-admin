@@ -1,7 +1,8 @@
 import type { Router } from 'vue-router';
 import { PageRouterName } from '..';
+import store from '@/store'
 
-const getAppToken = () => localStorage.getItem('APP_TOKEN');
+const getAppToken = () => store.state.user.token;
 
 export function createPermissionGuard(router: Router) {
 

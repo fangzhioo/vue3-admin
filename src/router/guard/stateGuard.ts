@@ -1,8 +1,13 @@
 import type { Router } from 'vue-router';
 import { PageRouterName } from '..';
+import store from '@/store'
+import { getNamespace, IModules } from '@/store';
+import { USER_ACTIONS } from '@/store/modules/user';
 
 const resetState = () => {
-  localStorage.removeItem('APP_TOKEN');
+  // localStorage.removeItem('APP_TOKEN');
+  store.dispatch(getNamespace(IModules.User, USER_ACTIONS.changeUserLogout))
+  
 }
 
 export function createStateGuard(router: Router) {
