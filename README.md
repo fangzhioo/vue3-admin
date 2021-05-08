@@ -29,3 +29,9 @@ Run `Volar: Switch TS Plugin on/off` from VSCode command palette.
 # Proview
 
 https://vue3-admin-indol.vercel.app/
+
+# yarn 清理不必要的依赖包
+
+```bash
+yarn autoclean --init
+```

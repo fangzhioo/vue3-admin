@@ -1,13 +1,7 @@
 <template>
-  <div>
-account
-  </div>
+  <div> account </div>
 </template>
 
-<script setup>
+<script setup></script>
 
-</script>
-
-<style>
-
-</style>
+<style></style>

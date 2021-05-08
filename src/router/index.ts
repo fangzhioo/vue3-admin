@@ -2,7 +2,7 @@ import type { App } from 'vue';
 import type { RouteRecordRaw } from 'vue-router';
 import { createRouter, createWebHashHistory } from 'vue-router';
 
-const LayoutRoot = () => import('@/layouts/root/index.vue')
+const LayoutRoot = () => import('@/layouts/root/index.vue');
 
 // 页面name枚举
 export enum PageRouterName {
@@ -13,7 +13,7 @@ export enum PageRouterName {
   System = 'System',
   SystemAccount = 'SystemAccount',
   About = 'About',
-  ErrorPage = 'ErrorPage'
+  ErrorPage = 'ErrorPage',
 }
 
 const routes: RouteRecordRaw[] = [
@@ -22,7 +22,7 @@ const routes: RouteRecordRaw[] = [
     name: PageRouterName.Root,
     redirect: '/dashboard',
     meta: {
-      title: '首页'
+      title: '首页',
     },
   },
   {
@@ -30,8 +30,8 @@ const routes: RouteRecordRaw[] = [
     name: PageRouterName.Login,
     component: () => import('@/pages/login/index.vue'),
     meta: {
-      title: '登录'
-    }
+      title: '登录',
+    },
   },
   {
     path: '/dashboard',
@@ -39,7 +39,7 @@ const routes: RouteRecordRaw[] = [
     component: LayoutRoot,
     redirect: '/dashboard/analysis',
     meta: {
-      title: 'Dashboard'
+      title: 'Dashboard',
     },
     children: [
       {
@@ -47,10 +47,10 @@ const routes: RouteRecordRaw[] = [
         name: PageRouterName.DashboardAnalysis,
         component: () => import('@/pages/dashboard/analysis.vue'),
         meta: {
-          title: 'Analysis'
-        }
-      }
-    ]
+          title: 'Analysis',
+        },
+      },
+    ],
   },
   {
     path: '/system',
@@ -58,7 +58,7 @@ const routes: RouteRecordRaw[] = [
     component: LayoutRoot,
     redirect: '/system/account',
     meta: {
-      title: 'System'
+      title: 'System',
     },
     children: [
       {
@@ -66,10 +66,10 @@ const routes: RouteRecordRaw[] = [
         name: PageRouterName.SystemAccount,
         component: () => import('@/pages/system/account.vue'),
         meta: {
-          title: 'SystemAccount'
-        }
-      }
-    ]
+          title: 'SystemAccount',
+        },
+      },
+    ],
   },
   {
     path: '/about',
@@ -77,7 +77,7 @@ const routes: RouteRecordRaw[] = [
     component: LayoutRoot,
     redirect: '/about/index',
     meta: {
-      title: 'About'
+      title: 'About',
     },
     children: [
       {
@@ -85,17 +85,17 @@ const routes: RouteRecordRaw[] = [
         name: PageRouterName.About,
         component: () => import('@/pages/about/index.vue'),
         meta: {
-          title: 'About'
-        }
-      }
-    ]
+          title: 'About',
+        },
+      },
+    ],
   },
   {
     path: '/:path(.*)*',
     name: PageRouterName.ErrorPage,
     component: LayoutRoot,
     meta: {
-      title: 'ErrorPage'
+      title: 'ErrorPage',
     },
     children: [
       {
@@ -103,23 +103,23 @@ const routes: RouteRecordRaw[] = [
         name: PageRouterName.ErrorPage,
         component: () => import('@/pages/exception/index.vue'),
         meta: {
-          title: 'ErrorPage'
-        }
-      }
-    ]
-  }
+          title: 'ErrorPage',
+        },
+      },
+    ],
+  },
 ];
 
 // app router
 const router = createRouter({
-  // createWebHistory => history路由 
+  // createWebHistory => history路由
   // createWebHashHistory => hash路由
   history: createWebHashHistory(),
   routes: (routes as unknown) as RouteRecordRaw[],
   strict: true,
   // 滚动行为
   scrollBehavior: () => ({ left: 0, top: 0 }),
-})
+});
 
 // config router
 export function setupRouter(app: App<Element>) {

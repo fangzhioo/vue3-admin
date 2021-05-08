@@ -1,7 +1,7 @@
 import { RoleEnum } from '@/constants/role';
 import { UserInfo } from '@/constants/user';
 import { IActionTree, IModule, IMutationTree } from '..';
-import router, { PageRouterName } from '@/router'
+import router, { PageRouterName } from '@/router';
 
 const APP_TOKEN_KEY = 'APP_TOKEN_KEY';
 const getAppToken = () => localStorage.getItem(APP_TOKEN_KEY) || undefined;
@@ -10,13 +10,13 @@ const setAppToken = (token: string) => localStorage.setItem(APP_TOKEN_KEY, token
 export enum USER_MUTATIONS {
   setToken = 'setToken',
   setUserInfo = 'setUserInfo',
-  setRoleList = 'setRoleList'
+  setRoleList = 'setRoleList',
 }
 
 export enum USER_ACTIONS {
   fetchCurrentUserInfo = 'fetchCurrentUserInfo',
   fetchUserLogin = 'fetchUserLogin',
-  changeUserLogout = 'changeUserLogout'
+  changeUserLogout = 'changeUserLogout',
 }
 
 export interface UserState {
@@ -37,7 +37,7 @@ export interface UserState {
 const state = (): UserState => ({
   token: getAppToken(),
   userInfo: null,
-  roleList: []
+  roleList: [],
 });
 
 const mutations: IMutationTree<USER_MUTATIONS, UserState> = {
@@ -50,72 +50,77 @@ const mutations: IMutationTree<USER_MUTATIONS, UserState> = {
   [USER_MUTATIONS.setUserInfo]: (state, userInfo) => {
     state.userInfo = userInfo;
   },
-}
+};
 
 const actions: IActionTree<USER_ACTIONS, UserState> = {
-  [USER_ACTIONS.fetchCurrentUserInfo]: ({commit, state}) => {
+  [USER_ACTIONS.fetchCurrentUserInfo]: ({ commit, state }) => {
     // 模拟请求
     return fetch('/api/user/current', {
       method: 'get',
       headers: {
         'content-type': 'application/json',
-        token: state.token || ''
+        token: state.token || '',
       },
-    }).then(res => {
-      if (res.status === 200) {
-        return res.json()
-      }
-      throw new Error('no json')
-    }).then(res => {
-      if(res.code === 200 ) {
-        setAppToken(res.data.token);
-        commit(USER_MUTATIONS.setToken, res.data.token);
-        commit(USER_MUTATIONS.setRoleList, res.data.roleList);
-        commit(USER_MUTATIONS.setUserInfo, res.data.userInfo);
-      } else {
-        throw new Error(res.message);
-      }
-    }).catch(() => {
-      commit(USER_ACTIONS.changeUserLogout);
-      router.replace({
-        name: PageRouterName.Login
-      })
     })
+      .then((res) => {
+        if (res.status === 200) {
+          return res.json();
+        }
+        throw new Error('no json');
+      })
+      .then((res) => {
+        if (res.code === 200) {
+          setAppToken(res.data.token);
+          commit(USER_MUTATIONS.setToken, res.data.token);
+          commit(USER_MUTATIONS.setRoleList, res.data.roleList);
+          commit(USER_MUTATIONS.setUserInfo, res.data.userInfo);
+        } else {
+          throw new Error(res.message);
+        }
+      })
+      .catch(() => {
+        commit(USER_ACTIONS.changeUserLogout);
+        router.replace({
+          name: PageRouterName.Login,
+        });
+      });
   },
   [USER_ACTIONS.fetchUserLogin]: ({ commit }, payload) => {
     // 模拟请求
     return fetch('/api/user/login', {
       method: 'post',
       body: JSON.stringify(payload),
-    }).then(res => {
-      if (res.status === 200) {
-        return res.json()
-      }
-      throw new Error('no json')
-    }).then(res => {
-      console.log(res);
-      if(res.code === 200 ) {
-        setAppToken(res.data.token);
-        commit(USER_MUTATIONS.setToken, res.data.token);
-        commit(USER_MUTATIONS.setRoleList, res.data.roleList);
-        commit(USER_MUTATIONS.setUserInfo, res.data.userInfo);
-      } else {
-        throw new Error(res.message);
-      }
     })
+      .then((res) => {
+        if (res.status === 200) {
+          return res.json();
+        }
+        throw new Error('no json');
+      })
+      .then((res) => {
+        console.log(res);
+        if (res.code === 200) {
+          setAppToken(res.data.token);
+          commit(USER_MUTATIONS.setToken, res.data.token);
+          commit(USER_MUTATIONS.setRoleList, res.data.roleList);
+          commit(USER_MUTATIONS.setUserInfo, res.data.userInfo);
+        } else {
+          throw new Error(res.message);
+        }
+      });
   },
   [USER_ACTIONS.changeUserLogout]: ({ commit }) => {
-    commit(USER_MUTATIONS.setToken, undefined)
-    commit(USER_MUTATIONS.setRoleList, [])
-    commit(USER_MUTATIONS.setUserInfo, null)
-  }
-}
+    commit(USER_MUTATIONS.setToken, undefined);
+    commit(USER_MUTATIONS.setRoleList, []);
+    commit(USER_MUTATIONS.setUserInfo, null);
+  },
+};
 
 const userModule: IModule<UserState> = {
   namespaced: true,
   state,
   mutations,
   actions,
-}
+};
 
 export default userModule;

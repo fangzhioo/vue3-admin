@@ -9,7 +9,7 @@ export function resultSuccess<T = Recordable>(data: T, { message = 'ok' } = {}) 
   };
 }
 
-export function resultPageSuccess<T = any>(
+export function resultPageSuccess<T = $TODO>(
   page: number,
   pageSize: number,
   list: T[],
@@ -35,7 +35,7 @@ export function resultError(message = 'Request failed', { code = 500, result = n
   };
 }
 
-export function pagination<T = any>(pageNo: number, pageSize: number, array: T[]): T[] {
+export function pagination<T = $TODO>(pageNo: number, pageSize: number, array: T[]): T[] {
   const offset = (pageNo - 1) * Number(pageSize);
   const ret =
     offset + Number(pageSize) >= array.length

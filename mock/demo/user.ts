@@ -9,8 +9,8 @@ const auser = {
     realName: 'fangzhi',
     desc: '666',
   },
-  roleList: ['super', 'tester']
-}
+  roleList: ['super', 'tester'],
+};
 
 export default [
   {
@@ -18,9 +18,9 @@ export default [
     method: 'post',
     response: ({ body }) => {
       if (body.username === 'tongren' && body.password === '123456') {
-        return resultSuccess(auser)
+        return resultSuccess(auser);
       }
-      return resultError('用户名密码错误')
+      return resultError('用户名密码错误');
     },
   },
   {
@@ -29,7 +29,7 @@ export default [
     // timeout: 1000,
     response: ({ headers }) => {
       if (!headers.token) {
-        return resultError('获取当前用户信息失败')
+        return resultError('获取当前用户信息失败');
       }
       return resultSuccess(auser);
     },

@@ -2,10 +2,15 @@ import type { ConfigEnv, UserConfig } from 'vite';
 import { loadEnv } from 'vite';
 import { resolve } from 'path';
 import { wrapperEnv } from './build/utils';
-import { createVitePlugins } from './build/vite/plugin';
+import { OUTPUT_DIR } from './build/constant';
 import { createProxy } from './build/vite/proxy';
+import { createVitePlugins } from './build/vite/plugin';
 
 import pkg from './package.json';
+
+function pathResolve(dir: string) {
+  return resolve(process.cwd(), '.', dir);
+}
 
 const { dependencies, devDependencies, name, version } = pkg;
 const __APP_INFO__ = {
@@ -15,12 +20,17 @@ const __APP_INFO__ = {
 
 // https://vitejs.dev/config/
 export default ({ command, mode }: ConfigEnv): UserConfig => {
+  // command 只有两个值 ‘serve’和 ‘build’
+  // mode 一般也有两个 ‘development’ 和 ‘production’
+
+  // 返回 Node.js 进程的当前工作目录。这里指 -> 项目根目录
   const root = process.cwd();
+  // 获取对应mode下的配置，即文件.env、.env.development 、.env.production 等配置
   const env = loadEnv(mode, root);
 
   const isBuild = command === 'build';
 
-  // The boolean type read by loadEnv is a string. This function can be converted to boolean type
+  // loadEnv读取的布尔类型是一个字符串。该函数可以转换为布尔类型。
   const viteEnv = wrapperEnv(env);
 
   const { VITE_PORT, VITE_PUBLIC_PATH, VITE_PROXY } = viteEnv;
@@ -28,7 +38,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
   return {
     base: VITE_PUBLIC_PATH,
     root,
-    // The vite plugin used by the project. The quantity is large, so it is separately extracted and managed
+    // 项目使用的vite插件。数量大，单独提取管理
     plugins: createVitePlugins(viteEnv, isBuild),
     css: {
       preprocessorOptions: {
@@ -40,10 +50,13 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     },
     resolve: {
       // 别名
-      alias: {
-        '@': resolve(__dirname, 'src'),
-        '@components': resolve(__dirname, 'src/components'),
-      },
+      alias: [
+        // @/xxxx => src/xxxx
+        {
+          find: /@\//,
+          replacement: pathResolve('src') + '/',
+        },
+      ],
     },
     server: {
       port: VITE_PORT,
@@ -52,15 +65,21 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     },
     build: {
       target: 'es2015',
+      outDir: OUTPUT_DIR,
       terserOptions: {
         compress: {
+          // 通过true以防止Infinity被压缩为1/0
           keep_infinity: true,
+          //  用于删除生产环境中的console
           drop_console: false,
         }
       },
+      // 启用/禁用 brotli 压缩大小报告。压缩大型输出文件可能会很慢，因此禁用该功能可能会提高大型项目的构建性能。禁用就好。
       brotliSize: false,
+      // chunk 大小警告的限制（以 kbs 为单位）。默认 500
       chunkSizeWarningLimit: 1500
     },
+    // 定义全局变量替换方式。
     define: {
       __APP_INFO__: JSON.stringify(__APP_INFO__)
     },

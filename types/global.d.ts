@@ -4,6 +4,8 @@ import type {
   PropType as VuePropType,
 } from 'vue';
 
+
+
 declare global {
   const __APP_INFO__: {
     pkg: {
@@ -18,6 +20,9 @@ declare global {
     // Global vue app instance
     __APP__: App<Element>;
   }
+
+  // 所有的any都应该补全一个类型，所以这里用 $TODO 来记录需要补全的any
+  declare type $TODO = any
 
   // vue
   declare type PropType<T> = VuePropType<T>;
