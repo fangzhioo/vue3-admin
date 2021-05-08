@@ -3,6 +3,9 @@
     <div> username: {{ username || '-' }} </div>
     <div> realName: {{ realName || '-' }} </div>
     <div> roles: {{ roles || '-' }} </div>
+    <el-button>我是按钮</el-button>
+    <el-input placeholder="输入框"></el-input>
+    <el-rate></el-rate>
   </div>
 </template>
 
