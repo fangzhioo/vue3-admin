@@ -77,7 +77,26 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       // 启用/禁用 brotli 压缩大小报告。压缩大型输出文件可能会很慢，因此禁用该功能可能会提高大型项目的构建性能。禁用就好。
       brotliSize: false,
       // chunk 大小警告的限制（以 kbs 为单位）。默认 500
-      chunkSizeWarningLimit: 1500
+      chunkSizeWarningLimit: 1500,
+      rollupOptions: {
+        output: {
+          entryFileNames: '[name]-[hash].js',
+          chunkFileNames: '[name]-[hash].js',
+          assetFileNames: '[name]-[hash].[ext]',
+          manualChunks(id) {
+            if (id.includes('/node_modules/')) {
+              // 设置需要独立打包的npm包
+              const expansions = ['ant-design-vue'];
+              const c = expansions.find(exp => id.includes(`/node_modules/${exp}`));
+              if (c) {
+                return `expansion-${c}`;
+              } else {
+                return 'vendor';
+              }
+            }
+          }
+        }
+      }
     },
     // 定义全局变量替换方式。
     define: {

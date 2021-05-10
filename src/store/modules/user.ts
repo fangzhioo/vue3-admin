@@ -2,6 +2,7 @@ import { RoleEnum } from '@/constants/role';
 import { UserInfo } from '@/constants/user';
 import { IActionTree, IModule, IMutationTree } from '..';
 import router, { PageRouterName } from '@/router';
+import { getCurrentUserInfo, postUserLogin } from '@/api/user';
 
 const APP_TOKEN_KEY = 'APP_TOKEN_KEY';
 const getAppToken = () => localStorage.getItem(APP_TOKEN_KEY) || undefined;
@@ -53,51 +54,26 @@ const mutations: IMutationTree<USER_MUTATIONS, UserState> = {
 };
 
 const actions: IActionTree<USER_ACTIONS, UserState> = {
-  [USER_ACTIONS.fetchCurrentUserInfo]: ({ commit, state }) => {
-    // 模拟请求
-    return fetch('/api/user/current', {
-      method: 'get',
-      headers: {
-        'content-type': 'application/json',
-        token: state.token || '',
-      },
+  [USER_ACTIONS.fetchCurrentUserInfo]: ({ commit }) => {
+    getCurrentUserInfo().then((res) => {
+      if (res.code === 200) {
+        setAppToken(res.data.token);
+        commit(USER_MUTATIONS.setToken, res.data.token);
+        commit(USER_MUTATIONS.setRoleList, res.data.roleList);
+        commit(USER_MUTATIONS.setUserInfo, res.data.userInfo);
+      } else {
+        throw new Error(res.message);
+      }
     })
-      .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        }
-        throw new Error('no json');
-      })
-      .then((res) => {
-        if (res.code === 200) {
-          setAppToken(res.data.token);
-          commit(USER_MUTATIONS.setToken, res.data.token);
-          commit(USER_MUTATIONS.setRoleList, res.data.roleList);
-          commit(USER_MUTATIONS.setUserInfo, res.data.userInfo);
-        } else {
-          throw new Error(res.message);
-        }
-      })
-      .catch(() => {
-        commit(USER_ACTIONS.changeUserLogout);
-        router.replace({
-          name: PageRouterName.Login,
-        });
+    .catch(() => {
+      commit(USER_ACTIONS.changeUserLogout);
+      router.replace({
+        name: PageRouterName.Login,
       });
+    });
   },
   [USER_ACTIONS.fetchUserLogin]: ({ commit }, payload) => {
-    // 模拟请求
-    return fetch('/api/user/login', {
-      method: 'post',
-      body: JSON.stringify(payload),
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        }
-        throw new Error('no json');
-      })
-      .then((res) => {
+    return postUserLogin(payload).then((res) => {
         console.log(res);
         if (res.code === 200) {
           setAppToken(res.data.token);

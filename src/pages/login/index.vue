@@ -1,8 +1,8 @@
 <template>
   <div>
-    <input v-model="username" type="text" placeholder="用户名" />
-    <input v-model="password" type="password" placeholder="密码" />
-    <button @click="handleLogin">login</button>
+    <a-input v-model:value="username" type="text" placeholder="用户名" />
+    <a-input v-model:value="password" type="password" placeholder="密码" />
+    <a-button @click="handleLogin">login</a-button>
   </div>
 </template>
 
